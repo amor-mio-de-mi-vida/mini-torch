@@ -234,11 +234,8 @@ def reduce(
     # TODO: Implement for Task 0.3.
     def func(ls: Iterable[float]) -> float:
         result = start
-        index = 0
         for item in ls:
-            if index != 0:
-                result = fn(result, item)
-            index += 1
+            result = fn(result, item)
         return result
     return func
     # raise NotImplementedError('Need to implement for Task 0.3')
@@ -247,12 +244,12 @@ def reduce(
 def sum(ls: Iterable[float]) -> float:
     "Sum up a list using `reduce` and `add`."
     # TODO: Implement for Task 0.3.
-    return reduce(add, next(iter(ls)))(ls)
+    return reduce(add, 0)(ls)
     #raise NotImplementedError('Need to implement for Task 0.3')
 
 
 def prod(ls: Iterable[float]) -> float:
     "Product of a list using `reduce` and `mul`."
     # TODO: Implement for Task 0.3.
-    return reduce(mul, next(iter(ls)))(ls)
+    return reduce(mul, 1)(ls)
     # raise NotImplementedError('Need to implement for Task 0.3')

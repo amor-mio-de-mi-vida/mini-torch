@@ -23,7 +23,13 @@ def central_difference(f: Any, *vals: Any, arg: int = 0, epsilon: float = 1e-6) 
         An approximation of $f'_i(x_0, \ldots, x_{n-1})$
     """
     # TODO: Implement for Task 1.1.
-    raise NotImplementedError('Need to implement for Task 1.1')
+    arg_1 = [i for i in vals]
+    arg_1[arg] += epsilon
+    m = f(*arg_1)
+    arg_1[arg] -= 2 * epsilon
+    n = f(*arg_1)
+    return (m - n) / (2 * epsilon)
+    # raise NotImplementedError('Need to implement for Task 1.1')
 
 
 variable_count = 1
@@ -62,7 +68,34 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
         Non-constant Variables in topological order starting from the right.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError('Need to implement for Task 1.4')
+    result = []
+    PermanentMarked = []
+    TemporaryMarked = []
+
+    def visit(n: Variable):
+        # Don't do anything with constants
+        if n.is_constant():
+            return
+        if n.unique_id in PermanentMarked:
+            return
+        elif n.unique_id in TemporaryMarked:
+            raise RuntimeError("Not a DAG")
+
+        TemporaryMarked.append(n.unique_id)
+
+        if n.is_leaf():
+            pass
+        else:
+            for input in n.history.inputs:
+                visit(input)
+        TemporaryMarked.remove(n.unique_id)
+        PermanentMarked.append(n.unique_id)
+
+        result.insert(0, n)
+
+    visit(variable)
+    return result
+    # raise NotImplementedError('Need to implement for Task 1.4')
 
 
 def backpropagate(variable: Variable, deriv: Any) -> None:
@@ -77,7 +110,25 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError('Need to implement for Task 1.4')
+    order = topological_sort(variable)
+
+    node2driv = {}
+    node2driv[variable.unique_id] = deriv
+    for node in order:
+        if node.is_leaf():
+            continue
+        if node.unique_id in node2driv.keys():
+            deriv = node2driv[node.unique_id]
+        deriv_tmp = node.chain_rule(deriv)
+        for key, item in deriv_tmp:
+            if key.is_leaf():
+                key.accumulate_derivative(item)
+                continue
+            if key.unique_id in node2driv.keys():
+                node2driv[key.unique_id] += item
+            else:
+                node2driv[key.unique_id] = item
+    # raise NotImplementedError('Need to implement for Task 1.4')
 
 
 @dataclass

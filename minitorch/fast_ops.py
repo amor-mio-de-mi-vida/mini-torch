@@ -160,9 +160,9 @@ def tensor_map(
         in_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 3.1.
+        out_index = np.zeros(MAX_DIMS, np.int32)
+        in_index = np.zeros(MAX_DIMS, np.int32)
         for i in prange(len(out)):
-            out_index = np.zeros(MAX_DIMS, np.int32)
-            in_index = np.zeros(MAX_DIMS, np.int32)
             to_index(i, out_shape, out_index)
             broadcast_index(out_index, out_shape, in_shape, in_index)
             data = in_storage[index_to_position(in_index, in_strides)]
@@ -206,10 +206,10 @@ def tensor_zip(
         b_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 3.1.
+        out_index = np.zeros(MAX_DIMS, np.int32)
+        a_in = np.zeros(MAX_DIMS, np.int32)
+        b_in = np.zeros(MAX_DIMS, np.int32)
         for i in prange(len(out)):
-            out_index = np.zeros(MAX_DIMS, np.int32)
-            a_in = np.zeros(MAX_DIMS, np.int32)
-            b_in = np.zeros(MAX_DIMS, np.int32)
             to_index(i, out_shape, out_index)
             broadcast_index(out_index, out_shape, a_shape, a_in)
             a_data = a_storage[index_to_position(a_in, a_strides)]
@@ -250,8 +250,8 @@ def tensor_reduce(
         reduce_dim: int,
     ) -> None:
         # TODO: Implement for Task 3.1.
+        out_index = np.zeros(MAX_DIMS, np.int32)
         for i in prange(len(out)):
-            out_index = np.zeros(MAX_DIMS, np.int32)
             to_index(i, out_shape, out_index)
             o_index = index_to_position(out_index, out_strides)
             for j in range(a_shape[reduce_dim]):

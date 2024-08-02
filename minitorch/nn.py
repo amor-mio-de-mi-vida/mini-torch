@@ -24,7 +24,18 @@ def tile(input: Tensor, kernel: Tuple[int, int]) -> Tuple[Tensor, int, int]:
     assert height % kh == 0
     assert width % kw == 0
     # TODO: Implement for Task 4.3.
-    raise NotImplementedError('Need to implement for Task 4.3')
+    new_height = height // kh
+    new_width = width // kw
+
+    input = input.contiguous()
+    input = input.view(batch, channel, new_height, kh, new_width, kw)
+    input = input.permute(0, 1, 2, 4, 3, 5)
+
+    input = input.contiguous()
+    input = input.view(batch, channel, new_height, new_width, kw * kh)
+
+    return input, new_height, new_width
+    # raise NotImplementedError('Need to implement for Task 4.3')
 
 
 def avgpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
@@ -40,7 +51,11 @@ def avgpool2d(input: Tensor, kernel: Tuple[int, int]) -> Tensor:
     """
     batch, channel, height, width = input.shape
     # TODO: Implement for Task 4.3.
-    raise NotImplementedError('Need to implement for Task 4.3')
+    input, tile_h, tile_w = tile(input, kernel)
+    input = input.mean(4)
+    input = input.view(batch, channel, tile_h, tile_w)
+    return input
+    # raise NotImplementedError('Need to implement for Task 4.3')
 
 
 max_reduce = FastOps.reduce(operators.max, -1e9)

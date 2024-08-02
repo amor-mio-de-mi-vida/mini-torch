@@ -232,7 +232,30 @@ def _tensor_conv2d(
     s20, s21, s22, s23 = s2[0], s2[1], s2[2], s2[3]
 
     # TODO: Implement for Task 4.2.
-    raise NotImplementedError('Need to implement for Task 4.2')
+    for i in prange(out_size):
+        temp_i = i + 0
+        out_index = np.zeros(len(out_shape))
+        to_index(temp_i, out_shape, out_index)
+        out_batch, out_channel, out_height, out_width = out_index
+        val = 0
+        for j in prange(in_channels):
+            temp_j = j + 0
+            for h in range(kh):
+                for w in range(kw):
+                    weight_index = np.array([out_channel, temp_j, h, w])
+                    weight_pos = index_to_position(weight_index, weight_strides)
+                    if reverse:
+                        if out_width - w >= 0 and out_height - h >= 0:
+                            in_index = np.array([out_batch, temp_j, out_height - h, out_width - w])
+                            in_pos = index_to_position(in_index, input_strides)
+                            val += input[int(in_pos)] * weight[int(weight_pos)]
+                    else:
+                        if width > out_width + w and height > out_height + h:
+                            in_index = np.array([out_batch, temp_j, out_height + h, out_width + w])
+                            in_pos = index_to_position(in_index, input_strides)
+                            val = val + input[(int(in_pos))] * weight[int(weight_pos)]
+        out[temp_i] = val
+    # raise NotImplementedError('Need to implement for Task 4.2')
 
 
 tensor_conv2d = njit(parallel=True, fastmath=True)(_tensor_conv2d)

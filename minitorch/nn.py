@@ -92,7 +92,7 @@ class Max(Function):
     def backward(ctx: Context, grad_output: Tensor) -> Tuple[Tensor, float]:
         "Backward of max should be argmax (see above)"
         # TODO: Implement for Task 4.4.
-        input, dimInt = ctx.saved_tensors
+        input, dimInt = ctx.saved_values
         return grad_output * argmax(input, dimInt), 0.0
         # raise NotImplementedError('Need to implement for Task 4.4')
 
